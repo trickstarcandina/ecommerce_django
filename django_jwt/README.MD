@@ -19,4 +19,6 @@
 
 ## 2. Setting jwt ở : core\settings.py
 
-## 3. Xem file json để lấy danh sách api và dùng thử trong Postman
+## 3. Xem file django_jwt.postman_collection.json để lấy danh sách api
+
+
