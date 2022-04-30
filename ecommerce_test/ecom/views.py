@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
+from .filters import CakeFilter
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -140,9 +141,11 @@ def admin_drinks_view(request):
     drinks=models.Drink.objects.all()
     return render(request,'ecom/admin_drinks.html',{'products':drinks})
 
-def admin_cakes_view(request):
-    cakes=models.Cake.objects.all()
-    return render(request,'ecom/admin_cakes.html',{'products':cakes})
+def admin_cakes_view(request):    
+    cakes = models.Cake.objects.all()
+    cakeFilter = CakeFilter(request.GET, queryset=cakes)
+    context = {'products':cakes, 'cakeFilter' : cakeFilter}
+    return render(request,'ecom/admin_cakes.html', context)
 
 # admin add product by clicking on floating button
 @login_required(login_url='adminlogin')
