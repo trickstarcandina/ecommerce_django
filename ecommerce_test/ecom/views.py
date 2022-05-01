@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
-from .filters import CakeFilter
+from .filters import CakeItemFilter
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -77,12 +77,12 @@ def admin_dashboard_view(request):
     ordered_drinks=[]
     ordered_bys=[]
     for order in orders:
-        if order.cake != None:
-           ordered_cake=models.Cake.objects.all().filter(id=order.cake.id)
+        if order.cart.cakeitem != None:
+           ordered_cake=models.Cake.objects.all().filter(id=order.cart.cakeitem.id)
            ordered_cakes.append(ordered_cake)
            
-        if order.drink != None:
-           ordered_drink=models.Drink.objects.all().filter(id=order.drink.id)
+        if order.cart.drinkitem != None:
+           ordered_drink=models.Drink.objects.all().filter(id=order.cart.drinkitem.id)
            ordered_drinks.append(ordered_drink)           
            
         ordered_by=models.Customer.objects.all().filter(id = order.customer.id)
@@ -142,9 +142,9 @@ def admin_drinks_view(request):
     return render(request,'ecom/admin_drinks.html',{'products':drinks})
 
 def admin_cakes_view(request):    
-    cakes = models.Cake.objects.all()
-    cakeFilter = CakeFilter(request.GET, queryset=cakes)
-    context = {'products':cakes, 'cakeFilter' : cakeFilter}
+    cakeitems = models.Cakeitem.objects.all()
+    cakeItemFilter = CakeItemFilter(request.GET, queryset=cakeitems)
+    context = {'products':cakeitems, 'cakeItemFilter' : cakeItemFilter}
     return render(request,'ecom/admin_cakes.html', context)
 
 # admin add product by clicking on floating button
@@ -661,7 +661,7 @@ def my_order_view(request):
     orders=models.Orders.objects.all().filter(customer_id = customer)
     ordered_products=[]
     for order in orders:
-        ordered_product=models.Product.objects.all().filter(id=order.product.id)
+        ordered_product=models.Product.objects.all().filter(id=order.product.id) 
         ordered_products.append(ordered_product)
 
     return render(request,'ecom/my_order.html',{'data':zip(ordered_products,orders)})
