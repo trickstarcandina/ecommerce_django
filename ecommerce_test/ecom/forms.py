@@ -16,10 +16,15 @@ class CustomerForm(forms.ModelForm):
         model=models.Customer
         fields=['address','mobile','profile_pic']
 
-class ProductForm(forms.ModelForm):
+class DrinkForm(forms.ModelForm):
     class Meta:
-        model=models.Product
-        fields=['name','price','description','product_image']
+        model=models.Drink
+        fields=['name','description','size','type', 'expiry']
+
+class CakeForm(forms.ModelForm):
+    class Meta:
+        model=models.Cake
+        fields=['name','type','expiry']
 
 #address of shipment
 class AddressForm(forms.Form):
