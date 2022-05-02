@@ -48,12 +48,13 @@
 </head>
 <br><br><br><br><br><br>
 <!------ update page for doctor by admin(sumit)  ---------->
+<!-- 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container register-form">
     <div class="form">
       <div class="note">
-        <p>ADD PRODUCTS</p>
+        <p>Update Product Details</p>
       </div>
       <div class="form-content">
         <div class="row">
@@ -64,24 +65,43 @@
             <div class="form-group">
               {% render_field productForm.description class="form-control" placeholder="Description" %}
             </div>
-
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              {% render_field productForm.price class="form-control" placeholder="Price" %}
+              {% render_field productForm.size class="form-control" placeholder="Size" %}
             </div>
             <div class="form-group">
-              {% render_field productForm.product_image class="form-control" placeholder="product_image" %}
+              {% render_field productForm.expiry class="form-control" placeholder="Expriation date" %}
             </div>
 
 
           </div>
         </div>
-        <button type="submit" class="btnSubmit">ADD</button>
+        <button type="submit" class="btnSubmit">Update</button>
       </div>
     </div>
   </div>
 </form>
+-->
+
+<div class="row">
+	<div class="col-md-6">
+		<div class="card card-body">
+
+			<form action="" method="POST">
+				{% csrf_token %}
+				
+				{% for form in productForm %}
+					{{form}}
+					<hr>
+				{% endfor %}
+				<input type="submit" name="Submit">
+			</form>
+
+		</div>
+	</div>
+</div>
+
 <!--
 developed By : sumit kumar
 facebook : fb.com/sumit.luv
