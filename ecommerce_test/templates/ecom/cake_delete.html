@@ -1,0 +1,22 @@
+{% extends 'ecom/admin_base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div class = "card card-body">
+            <p> Bạn có chắc chắn xóa "{{ item }}"</p>
+
+            <form action = "{%url 'delete-cake' item.id %}" method = "POST">
+                {% csrf_token %}
+                <a class = "btn btn-warning" href = "{% url 'admin-cakes' %}">Cancel</a>
+
+                <input class="btn btn-danger" type="submit" name = "Confirm">
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
