@@ -24,7 +24,18 @@ class DrinkForm(forms.ModelForm):
 class CakeForm(forms.ModelForm):
     class Meta:
         model=models.Cake
-        fields=['name','type','expiry']
+        fields='__all__'
+
+class CakeItemForm(forms.ModelForm):
+    class Meta:
+        model=models.Cakeitem
+        fields=['product_image', 'discount', 'price', 'description']
+        
+
+class CakeAddItemForm(forms.ModelForm):
+    class Meta:
+        model = models.Cakeitem
+        fields= '__all__'
 
 #address of shipment
 class AddressForm(forms.Form):

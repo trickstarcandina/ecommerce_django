@@ -72,17 +72,25 @@ facebook : fb.com/sumit.luv
           <th>Name</th>
           <th>Type</th>
           <th>Expriration date</th>
+          <th>Image</th>
+          <th>Discount</th>
+          <th>Price</th>
+          <th>Description</th>
           <th>Update</th>
           <th>Delete</th>
         </tr>
       </thead>
 
-      {% for p in products %}
+      {% for p in productitems %}
       {% if p %}
       <tr>
-        <td> {{p.name}}</td>
-        <td>{{p.type}}</td>
-        <td>{{p.expiry}}</td>
+        <td> {{p.cake.name}}</td>
+        <td>{{p.cake.type}}</td>
+        <td>{{p.cake.expiry}}</td>
+        <td><img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
+        <td>{{p.discount}}</td>
+        <td>{{p.price}}</td>
+        <td>{{p.description}}</td>
         <td><a class="btn btn-primary btn-xs" href="{% url 'update-cake' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
         
         <td><a class="btn btn-danger btn-xs" href="{% url 'delete-cake' p.id %}" ><span class="glyphicon glyphicon-trash"></span></a></td>

@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin-cakes', views.admin_cakes_view,name='admin-cakes'),
     path('admin-add-drink', views.admin_add_drink_view,name='admin-add-drink'),
     path('admin-add-cake', views.admin_add_cake_view,name='admin-add-cake'),
+    path('admin-add-cakeitem', views.admin_add_cakeitem_view,name='admin-add-cakeitem'),
     path('delete-cake/<int:pk>', views.delete_cake_view,name='delete-cake'),
     path('delete-drink/<int:pk>', views.delete_drink_view,name='delete-drink'),
     path('update-drink/<int:pk>', views.update_drink_view,name='update-drink'),

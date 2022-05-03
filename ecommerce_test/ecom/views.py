@@ -63,6 +63,9 @@ def afterlogin_view(request):
 #---------------------------------------------------------------------------------
 #------------------------ ADMIN RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
+
+#-----------------------MAIN ADMIN DASHBOARD VIEW------------------
+#******************************************************************
 @login_required(login_url='adminlogin')
 def admin_dashboard_view(request):
     # for cards on dashboard
@@ -97,7 +100,8 @@ def admin_dashboard_view(request):
     return render(request,'ecom/admin_dashboard.html',context=mydict)
 
 
-# admin view customer table
+#--------------------CUSTOMER RELATED VIEWS-----------------
+#***********************************************************
 @login_required(login_url='adminlogin')
 def view_customer_view(request):
     customers=models.Customer.objects.all()
@@ -131,7 +135,8 @@ def update_customer_view(request,pk):
             return redirect('view-customer')
     return render(request,'ecom/admin_update_customer.html',context=mydict)
 
-# admin view the product
+#--------------------------DRINK RELATED VIEWS------------------------
+#*********************************************************************
 @login_required(login_url='adminlogin')
 def admin_products_view(request):
     products=models.Product.objects.all()
@@ -145,14 +150,6 @@ def admin_drinks_view(request):
     return render(request,'ecom/admin_drinks.html', context)
 
 @login_required(login_url='adminlogin')
-def admin_cakes_view(request):    
-    cake = models.Cake.objects.all()
-    cakeFilter = CakeFilter(request.GET, queryset=cake)
-    context = {'products':cake, 'cakeFilter' : cakeFilter}
-    return render(request,'ecom/admin_cakes.html', context)
-
-# admin add product by clicking on floating button
-@login_required(login_url='adminlogin')
 def admin_add_drink_view(request):
     productForm = forms.DrinkForm()
     if request.method=='POST':
@@ -161,29 +158,6 @@ def admin_add_drink_view(request):
             productForm.save()
         return HttpResponseRedirect('admin-drinks')
     return render(request,'ecom/admin_add_drinks.html',{'productForm':productForm})
-
-@login_required(login_url='adminlogin')
-def admin_add_cake_view(request):
-    productForm = forms.CakeForm()
-    if request.method=='POST':
-        productForm=forms.CakeForm(request.POST, request.FILES)
-        if productForm.is_valid():
-            productForm.save()
-        return HttpResponseRedirect('admin-cakes')
-    return render(request,'ecom/admin_add_cakes.html',{'productForm':productForm})
-
-
-
-@login_required(login_url='adminlogin')
-def delete_cake_view(request,pk):
-    cake =models.Cake.objects.get(id=pk)
-    if request.method == "POST":
-        cake.delete()
-        return redirect('admin-cakes')
-
-    context = {'item' : cake}
-    return render(request, 'ecom/cake_delete.html', context)
-
 
 @login_required(login_url='adminlogin')
 def delete_drink_view(request,pk):
@@ -209,20 +183,72 @@ def update_drink_view(request,pk):
     context = {'productForm' : productForm}
     return render(request,'ecom/admin_update_drink.html',context)
 
+#--------------------------CAKE RELATED VIEWS-------------------------
+#*********************************************************************
+@login_required(login_url='adminlogin')
+def admin_cakes_view(request):    
+    cake = models.Cake.objects.all()
+    cakeitem = models.Cakeitem.objects.all()
+    cakeFilter = CakeFilter(request.GET, queryset=cake)
+    context = {'products':cake, 'cakeFilter' : cakeFilter, 'productitems' : cakeitem}
+    return render(request,'ecom/admin_cakes.html', context)
+
+
+@login_required(login_url='adminlogin')
+def admin_add_cake_view(request):
+    productForm = forms.CakeForm()
+    
+    productForm=forms.CakeForm(request.POST, request.FILES)
+    if productForm.is_valid():
+        productForm.save()
+        return HttpResponseRedirect('admin-add-cakeitem')
+    context = {'productForm':productForm}
+    return render(request,'ecom/admin_add_cakes.html', context)
+
+
+@login_required(login_url='adminlogin')
+def admin_add_cakeitem_view(request):
+    productItemForm = forms.CakeAddItemForm()
+    if request.method=='POST':
+        productItemForm=forms.CakeAddItemForm(request.POST, request.FILES)
+        if productItemForm.is_valid():
+            productItemForm.save()
+            return HttpResponseRedirect('admin-cakes')
+    #return HttpResponseRedirect('admin-cakes')
+    context = {'productItemForm':productItemForm}
+    return render(request,'ecom/admin_add_cakeitem.html', context)
+
+
+@login_required(login_url='adminlogin')
+def delete_cake_view(request,pk):
+    cakeitem =models.Cakeitem.objects.get(id=pk)
+    if request.method == "POST":
+        cakeitem.delete()
+        return redirect('admin-cakes')
+
+    context = {'item' : cakeitem}
+    return render(request, 'ecom/cake_delete.html', context)
+
+
 @login_required(login_url='adminlogin')
 def update_cake_view(request,pk):
-    cake = models.Cake.objects.get(id=pk)
-    productForm = forms.CakeForm(instance=cake)
+    cakeitem = models.Cakeitem.objects.get(id=pk)    
+    productItemForm = forms.CakeItemForm(instance=cakeitem)
+    productForm = forms.CakeForm(instance=cakeitem.cake)
     if request.method=='POST':
-        productForm=forms.CakeForm(request.POST, instance=cake)
-        if productForm.is_valid():
+        productForm=forms.CakeForm(request.POST, instance=cakeitem.cake)
+        productItemForm=forms.CakeItemForm(request.POST, instance=cakeitem)
+        if productForm.is_valid() and productItemForm.is_valid():
             productForm.save()
+            productItemForm.save()
             return redirect('admin-cakes')
 
-    context = {'productForm' : productForm}
+    context = {'productForm' : productForm, 'productItemForm' : productItemForm}
     return render(request,'ecom/admin_update_cake.html',context)
 
 
+#-------------------------- VIEW BOOKING -----------------------------
+#*********************************************************************
 @login_required(login_url='adminlogin')
 def admin_view_booking_view(request):
     orders=models.Orders.objects.all()
@@ -244,6 +270,8 @@ def admin_view_booking_view(request):
     return render(request,'ecom/admin_view_booking.html',{'data':zip(ordered_cakes, ordered_drinks,ordered_bys,orders)})
 
 
+#------------------------- ORDER RELATED VIEW ------------------------
+#*********************************************************************
 @login_required(login_url='adminlogin')
 def delete_order_view(request,pk):
     order=models.Orders.objects.get(id=pk)
@@ -263,7 +291,8 @@ def update_order_view(request,pk):
     return render(request,'ecom/update_order.html',{'orderForm':orderForm})
 
 
-# admin view the feedback
+#-------------------------- VIEW FEEDBACKS ---------------------------
+#*********************************************************************
 @login_required(login_url='adminlogin')
 def view_feedback_view(request):
     feedbacks=models.Feedback.objects.all().order_by('-id')

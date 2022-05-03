@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class = "card card-body">
-            <p> Bạn có chắc chắn xóa "{{ item }}"</p>
+            <p> Bạn có chắc chắn xóa "{{ item.cake.name }}"</p>
 
             <form action = "{%url 'delete-cake' item.id %}" method = "POST">
                 {% csrf_token %}
