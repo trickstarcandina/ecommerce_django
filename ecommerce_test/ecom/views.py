@@ -139,16 +139,14 @@ def admin_products_view(request):
 
 @login_required(login_url='adminlogin')
 def admin_drinks_view(request):
-    drink = models.Drink.objects.all()
-    drinkFilter = DrinkFilter(request.GET, queryset=drink)
-    context = {'products' : drink, 'drinkFilter' : drinkFilter}
+    drinkitem = models.Drinkitem.objects.all()
+    context = {'products' : drinkitem}
     return render(request,'ecom/admin_drinks.html', context)
 
 @login_required(login_url='adminlogin')
 def admin_cakes_view(request):    
-    cake = models.Cake.objects.all()
-    cakeFilter = CakeFilter(request.GET, queryset=cake)
-    context = {'products':cake, 'cakeFilter' : cakeFilter}
+    cakeitem = models.Cakeitem.objects.all()
+    context = {'products':cakeitem}
     return render(request,'ecom/admin_cakes.html', context)
 
 # admin add product by clicking on floating button
@@ -159,8 +157,20 @@ def admin_add_drink_view(request):
         productForm=forms.DrinkForm(request.POST, request.FILES)
         if productForm.is_valid():
             productForm.save()
+        return HttpResponseRedirect('admin-add-drinkitem')
+    return render(request,'ecom/admin_add_drinks.html',{'productForm':productForm})
+
+
+@login_required(login_url='adminlogin')
+def admin_add_drinkitem_view(request):
+    productForm = forms.DrinkItemForm()
+    if request.method=='POST':
+        productForm=forms.DrinkItemForm(request.POST, request.FILES)
+        if productForm.is_valid():
+            productForm.save()
         return HttpResponseRedirect('admin-drinks')
     return render(request,'ecom/admin_add_drinks.html',{'productForm':productForm})
+
 
 @login_required(login_url='adminlogin')
 def admin_add_cake_view(request):
@@ -169,57 +179,76 @@ def admin_add_cake_view(request):
         productForm=forms.CakeForm(request.POST, request.FILES)
         if productForm.is_valid():
             productForm.save()
-        return HttpResponseRedirect('admin-cakes')
+        return HttpResponseRedirect('admin-add-cakeitem')
     return render(request,'ecom/admin_add_cakes.html',{'productForm':productForm})
+
+@login_required(login_url='adminlogin')
+def admin_add_cakeitem_view(request):
+    productForm = forms.CakeItemForm()
+    if request.method=='POST':
+        productForm=forms.CakeItemForm(request.POST, request.FILES)
+        if productForm.is_valid():
+            productForm.save()
+        return HttpResponseRedirect('admin-cakes')
+
+    return render(request,'ecom/admin_add_cakeitems.html',{'productForm':productForm})
 
 
 
 @login_required(login_url='adminlogin')
 def delete_cake_view(request,pk):
-    cake =models.Cake.objects.get(id=pk)
+    cakeitem =models.Cakeitem.objects.get(id=pk)
+    cake = cakeitem.cake
     if request.method == "POST":
         cake.delete()
         return redirect('admin-cakes')
 
-    context = {'item' : cake}
+    context = {'item' : cakeitem}
     return render(request, 'ecom/cake_delete.html', context)
 
 
 @login_required(login_url='adminlogin')
 def delete_drink_view(request,pk):
-    drink =models.Drink.objects.get(id=pk)
+    drinkitem =models.Drinkitem.objects.get(id=pk)
+    drink = drinkitem.drink
     if request.method == "POST":
         drink.delete()
         return redirect('admin-drinks')
 
-    context = {'item' : drink}
+    context = {'item' : drinkitem}
     return render(request, 'ecom/drink_delete.html', context)
 
 
 @login_required(login_url='adminlogin')
 def update_drink_view(request,pk):
-    drink = models.Drink.objects.get(id=pk)
-    productForm = forms.DrinkForm(instance=drink)
+    drinkitem = models.Drinkitem.objects.get(id=pk)
+    productItemForm = forms.DrinkItemForm(instance=drinkitem)
+    productForm = forms.DrinkForm(instance=drinkitem.drink)
     if request.method=='POST':
-        productForm=forms.DrinkForm(request.POST, instance=drink)
-        if productForm.is_valid():
+        productForm=forms.DrinkForm(request.POST, request.FILES, instance=drinkitem.drink)
+        productItemForm = forms.DrinkItemForm(request.POST, request.FILES, instance=drinkitem)
+        if productForm.is_valid() and productItemForm.is_valid():
             productForm.save()
+            productItemForm.save()
             return redirect('admin-drinks')
 
-    context = {'productForm' : productForm}
+    context = {'productForm' : productForm, 'productItemForm' : productItemForm}
     return render(request,'ecom/admin_update_drink.html',context)
 
 @login_required(login_url='adminlogin')
 def update_cake_view(request,pk):
-    cake = models.Cake.objects.get(id=pk)
-    productForm = forms.CakeForm(instance=cake)
+    cakeitem = models.Cakeitem.objects.get(id=pk)
+    cakeForm = forms.CakeForm(instance= cakeitem.cake)
+    cakeItemForm = forms.CakeItemForm(instance= cakeitem)
     if request.method=='POST':
-        productForm=forms.CakeForm(request.POST, instance=cake)
-        if productForm.is_valid():
-            productForm.save()
+        cakeForm=forms.CakeForm(request.POST, instance=cakeitem.cake)
+        cakeitemForm=forms.CakeItemForm(request.POST, request.FILES, instance=cakeitem)
+        if cakeForm.is_valid() and cakeitemForm.is_valid():
+            cakeForm.save()
+            cakeitemForm.save()
             return redirect('admin-cakes')
 
-    context = {'productForm' : productForm}
+    context = {'cakeForm' : cakeForm, 'cakeitemForm' : cakeItemForm}
     return render(request,'ecom/admin_update_cake.html',context)
 
 

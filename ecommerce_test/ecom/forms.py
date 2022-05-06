@@ -19,12 +19,13 @@ class CustomerForm(forms.ModelForm):
 class DrinkForm(forms.ModelForm):
     class Meta:
         model=models.Drink
-        fields=['name','description','size','type', 'expiry']
+        fields=['name','size','type', 'expiry']
 
 class CakeForm(forms.ModelForm):
     class Meta:
         model=models.Cake
         fields=['name','type','expiry']
+
 
 #address of shipment
 class AddressForm(forms.Form):
@@ -48,3 +49,15 @@ class ContactusForm(forms.Form):
     Name = forms.CharField(max_length=30)
     Email = forms.EmailField()
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
+
+
+class CakeItemForm(forms.ModelForm):
+    class Meta:
+        model=models.Cakeitem
+        fields= '__all__'
+
+
+class DrinkItemForm(forms.ModelForm):
+    class Meta:
+        model=models.Drinkitem
+        fields= '__all__'

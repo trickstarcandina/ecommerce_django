@@ -46,12 +46,6 @@ facebook : fb.com/sumit.luv
 
 
 <div class="row">
-  <div>
-    <form method="get">
-        {{drinkFilter.form}}
-      <button class="btn btn-primary" type="submit">Search</button>
-    </form>	
-  </div>
     <a href="/admin-add-drink">
       <button class="btn btn-primary" type="submit">+ Add new drink</button>
     </a>
@@ -68,10 +62,13 @@ facebook : fb.com/sumit.luv
       <thead>
         <tr>
           <th>Name</th>
-          <th>Description</th>
           <th>Size</th>
           <th>Type</th>
           <th>Expriration Date</th>
+          <th>Image</th>
+          <th>Discount</th>
+          <th>Price</th>
+          <th>Description</th>
           <th>Update</th>
           <th>Delete</th>
         </tr>
@@ -80,11 +77,14 @@ facebook : fb.com/sumit.luv
       {% for p in products %}
       {% if p %}
       <tr>
-        <td> {{p.name}}</td>
-        <td> {{p.description}}</td>
-        <td>{{p.size}}</td>
-        <td>{{p.type}}</td>
-        <td>{{p.expiry}}</td>
+        <td> {{p.drink.name}}</td>
+        <td>{{p.drink.size}}</td>
+        <td>{{p.drink.type}}</td>
+        <td>{{p.drink.expiry}}</td>
+        <td><img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
+        <td>{{p.discount}}</td>
+        <td>{{p.price}}</td>
+        <td>{{p.description}}</td>
         <td><a class="btn btn-primary btn-xs" href="{% url 'update-drink' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
         <td><a class="btn btn-danger btn-xs" href="{% url 'delete-drink' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
       </tr>
