@@ -49,7 +49,7 @@ class ContactusForm(forms.Form):
     Email = forms.EmailField()
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
 
-#for shippment
+#for shipment
 class ShipmentForm(forms.ModelForm):
     class Meta:
         model=models.Shipment
