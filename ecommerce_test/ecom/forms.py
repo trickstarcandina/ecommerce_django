@@ -19,12 +19,13 @@ class CustomerForm(forms.ModelForm):
 class DrinkForm(forms.ModelForm):
     class Meta:
         model=models.Drink
-        fields=['name','description','size','type', 'expiry']
+        fields=['name','size','type', 'expiry']
 
 class CakeForm(forms.ModelForm):
     class Meta:
         model=models.Cake
         fields=['name','type','expiry']
+
 
 #address of shipment
 class AddressForm(forms.Form):
@@ -54,3 +55,14 @@ class ShipmentForm(forms.ModelForm):
     class Meta:
         model=models.Shipment
         fields=['name','price']
+
+class CakeItemForm(forms.ModelForm):
+    class Meta:
+        model=models.Cakeitem
+        fields= '__all__'
+
+
+class DrinkItemForm(forms.ModelForm):
+    class Meta:
+        model=models.Drinkitem
+        fields= '__all__'

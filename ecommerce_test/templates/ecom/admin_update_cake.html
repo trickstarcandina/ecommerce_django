@@ -88,11 +88,16 @@
 	<div class="col-md-6">
 		<div class="card card-body">
 
-			<form action="" method="POST">
+			<form action="" method="POST" enctype="multipart/form-data">
 				{% csrf_token %}
 				
-				{% for form in productForm %}
+				{% for form in cakeForm %}
 					{{form}}
+					<hr>
+				{% endfor %}
+
+        {% for item in cakeitemForm %}
+					{{item}}
 					<hr>
 				{% endfor %}
 				<input type="submit" name="Submit">
