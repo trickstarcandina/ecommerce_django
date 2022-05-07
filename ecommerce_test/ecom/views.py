@@ -809,10 +809,9 @@ def contactus_view(request):
 @login_required(login_url='adminlogin')
 def admin_shippment_view(request):    
     shipment = models.Shipment.objects.all()
-    shippmentFilter = ShippmentFilter(request.GET, queryset=shipment)
-    context = {'shippmentFilter' : shippmentFilter}
+    shipmentFilter = ShippmentFilter(request.GET, queryset=shipment)
+    context = {'shipment' : shipment, 'shipmentFilter' : shipmentFilter}
     return render(request,'ecom/admin_shippment.html', context)
-
 
 @login_required(login_url='adminlogin')
 def admin_add_shipment_view(request):
@@ -823,3 +822,27 @@ def admin_add_shipment_view(request):
             shipmentForm.save()
         return HttpResponseRedirect('admin-shipment')
     return render(request,'ecom/admin_add_shipment.html',{'shipmentForm' :shipmentForm})
+
+@login_required(login_url='adminlogin')
+def admin_delete_shipment_view(request,pk):
+    shipment = models.Shipment.objects.get(id=pk)
+    if request.method == "POST":
+        shipment.delete()
+        return redirect('admin-shipment')
+
+    context = {'item' : shipment}
+    return render(request, 'ecom/admin_shipment_delete.html', context)
+
+
+@login_required(login_url='adminlogin')
+def admin_update_shipment_view(request,pk):
+    shipment = models.Shipment.objects.get(id=pk)
+    shipmentForm = forms.ShipmentForm(instance=shipment)
+    if request.method=='POST':
+        shipmentForm=forms.ShipmentForm(request.POST, instance=shipment)
+        if shipmentForm.is_valid():
+            shipmentForm.save()
+            return redirect('admin-shipment')
+
+    context = {'shipmentForm' : shipmentForm}
+    return render(request,'ecom/admin_shipment_update.html',context)

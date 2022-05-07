@@ -49,7 +49,7 @@ facebook : fb.com/sumit.luv
 <div class="row">
   <div>
     <form method="get">
-      {{shippmentFilter.form}}
+      {{shipmentFilter.form}}
       <button class="btn btn-primary" type="submit" style="margin: 20px">
         Search
       </button>
@@ -84,7 +84,7 @@ facebook : fb.com/sumit.luv
         <td>
           <a
             class="btn btn-primary btn-xs"
-            href="{% url 'update-shipment' p.id  %}"
+            href="{% url 'admin-update-shipment' p.id  %}"
             ><span class="glyphicon glyphicon-edit"></span
           ></a>
         </td>
@@ -92,7 +92,7 @@ facebook : fb.com/sumit.luv
         <td>
           <a
             class="btn btn-danger btn-xs"
-            href="{% url 'delete-shipment' p.id %}"
+            href="{% url 'admin-delete-shipment' p.id %}"
             ><span class="glyphicon glyphicon-trash"></span
           ></a>
         </td>

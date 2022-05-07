@@ -48,15 +48,13 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
+<br /><br /><br /><br /><br /><br />
 
-<br /><br />
 <div class="row">
   <div class="col-md-6">
     <div class="card card-body">
       <form action="" method="POST">
-        {% csrf_token %} {% for form in shipmentForm %}
-        <p>{{ form.name }}</p>
-        {{form}}
+        {% csrf_token %} {% for form in shipmentForm %} {{form}}
         <hr />
         {% endfor %}
         <input type="submit" name="Submit" />
@@ -64,5 +62,11 @@
     </div>
   </div>
 </div>
+
+<!--
+developed By : sumit kumar
+facebook : fb.com/sumit.luv
+youtube : youtube.com/lazycoders
+-->
 
 {% endblock content %}
