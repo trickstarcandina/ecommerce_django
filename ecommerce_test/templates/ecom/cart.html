@@ -90,11 +90,11 @@ facebook : fb.com/sumit.luv
       {% if p %}
 
       <tr>
-        <td> {{p.name}}</td>
+        <td> {{p.cake.name}}</td>
         <td> <img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
         <td>{{p.price}}</td>
         <td>{{p.description}}</td>
-        <td>{{p.type}}</td>
+        <td>{{p.cake.type}}</td>
         <td><a class="btn btn-danger btn-xs" href="{% url 'remove-cake-from-cart' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
 
       </tr>
@@ -130,11 +130,11 @@ facebook : fb.com/sumit.luv
       {% if p %}
 
       <tr>
-        <td> {{p.name}}</td>
+        <td> {{p.drink.name}}</td>
         <td> <img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
         <td>{{p.price}}</td>
         <td>{{p.description}}</td>
-        <td>{{p.size}}</td>
+        <td>{{p.drink.size}}</td>
         <td><a class="btn btn-danger btn-xs" href="{% url 'remove-drink-from-cart' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
 
       </tr>

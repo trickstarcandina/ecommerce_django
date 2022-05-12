@@ -16,22 +16,17 @@ class CustomerForm(forms.ModelForm):
         model=models.Customer
         fields=['address','mobile','profile_pic']
 
-class DrinkForm(forms.ModelForm):
+class ProductForm(forms.ModelForm):
     class Meta:
-        model=models.Drink
-        fields=['name','size','type', 'expiry']
-
-class CakeForm(forms.ModelForm):
-    class Meta:
-        model=models.Cake
-        fields=['name','type','expiry']
-
+        model=models.Product
+        fields=['name','price','description','product_image']
 
 #address of shipment
 class AddressForm(forms.Form):
-    Email = forms.EmailField()
     Mobile= forms.IntegerField()
     Address = forms.CharField(max_length=500)
+    NameShip = forms.CharField(max_length=500)
+    Price = forms.IntegerField()
 
 class FeedbackForm(forms.ModelForm):
     class Meta:
@@ -49,20 +44,3 @@ class ContactusForm(forms.Form):
     Name = forms.CharField(max_length=30)
     Email = forms.EmailField()
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
-
-#for shipment
-class ShipmentForm(forms.ModelForm):
-    class Meta:
-        model=models.Shipment
-        fields=['name','price']
-
-class CakeItemForm(forms.ModelForm):
-    class Meta:
-        model=models.Cakeitem
-        fields= '__all__'
-
-
-class DrinkItemForm(forms.ModelForm):
-    class Meta:
-        model=models.Drinkitem
-        fields= '__all__'

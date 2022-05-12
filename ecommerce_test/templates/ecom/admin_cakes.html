@@ -38,20 +38,11 @@
 	margin-top:22px;
 }
   </style>
-
 </head>
 <!--
 written By : sumit kumar
 facebook : fb.com/sumit.luv
 -->
-<!-- Top filters -->
-
-
-<div class="row">
-      <a href="/admin-add-cake">
-        <button class="btn btn-primary" type="submit">+ Add new cake</button>
-      </a>
-</div>
 
 
 
@@ -64,12 +55,10 @@ facebook : fb.com/sumit.luv
       <thead>
         <tr>
           <th>Name</th>
-          <th>Type</th>
-          <th>Expriration date</th>
           <th>Image</th>
-          <th>Discount</th>
           <th>Price</th>
-          <th>Description</th>
+          <th>description</th>
+          <th>type</th>
           <th>Update</th>
           <th>Delete</th>
         </tr>
@@ -78,16 +67,13 @@ facebook : fb.com/sumit.luv
       {% for p in products %}
       {% if p %}
       <tr>
-        <td> {{p.cake.name}}</td>
-        <td>{{p.cake.type}}</td>
-        <td>{{p.cake.expiry}}</td>
-        <td><img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
-        <td>{{p.discount}}</td>
+        <td> {{p.name}}</td>
+        <td> <img src="{% static p.product_image.url %}" alt="Profile Pic" height="40px" width="40px" /></td>
         <td>{{p.price}}</td>
         <td>{{p.description}}</td>
-        <td><a class="btn btn-primary btn-xs" href="{% url 'update-cake' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-        
-        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-cake' p.id %}" ><span class="glyphicon glyphicon-trash"></span></a></td>
+        <td>{{p.type}}</td>
+        <td><a class="btn btn-primary btn-xs" href="{% url 'update-product' p.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
+        <td><a class="btn btn-danger btn-xs" href="{% url 'delete-product' p.id  %}"><span class="glyphicon glyphicon-trash"></span></a></td>
       </tr>
       {%else%}
       <br><br><br>
@@ -95,14 +81,15 @@ facebook : fb.com/sumit.luv
       {% endif %}
       {% endfor %}
     </table>
-  </div>  
+
+
+  </div>
+  
 </div>
-<!-- add product floating button 
+<!-- add product floating button -->
 <a href="/admin-add-product" class="float">
 <i class="fa fa-plus my-float"></i>
 </a>
--->
-
 <!--
 developed By : sumit kumar
 facebook : fb.com/sumit.luv

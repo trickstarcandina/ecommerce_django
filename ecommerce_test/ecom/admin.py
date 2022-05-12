@@ -1,10 +1,6 @@
 from django.contrib import admin
 from .models import Customer,Orders,Feedback,Cake,Drink,Cakeitem,Drinkitem,Cart,Shipment,Paypal,Payment,Comment
 # Register your models here.
-'''
-Ai làm mà thấy bị bug thì dùng phần khai báo ở trên này, 
-t khai báo trang admin như ở dưới cho nó đơn giản hơn
-
 class CustomerAdmin(admin.ModelAdmin):
     pass
 admin.site.register(Customer, CustomerAdmin)
@@ -27,34 +23,29 @@ admin.site.register(Drink, DrinkAdmin)
 
 class CakeitemAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Cakeitem, CakeAdmin)
+admin.site.register(Cakeitem, CakeitemAdmin)
+
 class DrinkitemAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Drinkitem, CakeAdmin)
+admin.site.register(Drinkitem, DrinkitemAdmin)
+
 class CartAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Cart, CakeAdmin)
+admin.site.register(Cart, CartAdmin)
+
 class ShipmentAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Shipment, CakeAdmin)
+admin.site.register(Shipment, ShipmentAdmin)
 
 class PaymentAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Paypal, CakeAdmin)
+admin.site.register(Payment, PaymentAdmin)
+
 class CommentAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Comment, CakeAdmin)
-'''
+admin.site.register(Comment, CommentAdmin)
+
+class PaypalAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(Paypal, PaypalAdmin)
 # Register your models here.
-admin.site.register(Customer)
-admin.site.register(Cake)
-admin.site.register(Cakeitem)
-admin.site.register(Drink)
-admin.site.register(Drinkitem)
-admin.site.register(Cart)
-admin.site.register(Paypal)
-admin.site.register(Shipment)
-admin.site.register(Payment)
-admin.site.register(Orders)
-admin.site.register(Feedback)
-admin.site.register(Comment)

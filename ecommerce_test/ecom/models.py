@@ -38,6 +38,7 @@ class Cakeitem(models.Model):
 
 class Drink(models.Model):
     name=models.CharField(max_length=40)
+    description=models.CharField(max_length=40)
     SIZE =(
         ('L','L'),
         ('M','M'),
@@ -65,7 +66,7 @@ class Cart(models.Model):
     cakeitem=models.ForeignKey('Cakeitem',on_delete=models.CASCADE,null=True)
     drinkitem=models.ForeignKey('Drinkitem',on_delete=models.CASCADE,null=True)
     dateCreated= models.DateField(auto_now_add=True,null=True)
-    totalMoney=models.FloatField()
+    totalMoney=models.FloatField(null=True)
 
 class Paypal(models.Model):
     idPaypal = models.PositiveIntegerField()

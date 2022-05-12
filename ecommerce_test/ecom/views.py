@@ -1,3 +1,4 @@
+from re import T
 from django.shortcuts import render,redirect,reverse
 from . import forms,models
 from django.http import HttpResponseRedirect,HttpResponse
@@ -6,7 +7,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
-from .filters import CakeFilter, DrinkFilter, ShippmentFilter
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -77,12 +77,12 @@ def admin_dashboard_view(request):
     ordered_drinks=[]
     ordered_bys=[]
     for order in orders:
-        if order.cart.cakeitem != None:
-           ordered_cake=models.Cake.objects.all().filter(id=order.cart.cakeitem.id)
+        if order.cake != None:
+           ordered_cake=models.Cake.objects.all().filter(id=order.cake.id)
            ordered_cakes.append(ordered_cake)
            
-        if order.cart.drinkitem != None:
-           ordered_drink=models.Drink.objects.all().filter(id=order.cart.drinkitem.id)
+        if order.drink != None:
+           ordered_drink=models.Drink.objects.all().filter(id=order.drink.id)
            ordered_drinks.append(ordered_drink)           
            
         ordered_by=models.Customer.objects.all().filter(id = order.customer.id)
@@ -137,119 +137,43 @@ def admin_products_view(request):
     products=models.Product.objects.all()
     return render(request,'ecom/admin_products.html',{'products':products})
 
-@login_required(login_url='adminlogin')
 def admin_drinks_view(request):
-    drinkitem = models.Drinkitem.objects.all()
-    context = {'products' : drinkitem}
-    return render(request,'ecom/admin_drinks.html', context)
+    drinks=models.Drink.objects.all()
+    return render(request,'ecom/admin_drinks.html',{'products':drinks})
 
-@login_required(login_url='adminlogin')
-def admin_cakes_view(request):    
-    cakeitem = models.Cakeitem.objects.all()
-    context = {'products':cakeitem}
-    return render(request,'ecom/admin_cakes.html', context)
+def admin_cakes_view(request):
+    cakes=models.Cake.objects.all()
+    return render(request,'ecom/admin_cakes.html',{'products':cakes})
 
 # admin add product by clicking on floating button
 @login_required(login_url='adminlogin')
-def admin_add_drink_view(request):
-    productForm = forms.DrinkForm()
+def admin_add_product_view(request):
+    productForm=forms.ProductForm()
     if request.method=='POST':
-        productForm=forms.DrinkForm(request.POST, request.FILES)
+        productForm=forms.ProductForm(request.POST, request.FILES)
         if productForm.is_valid():
             productForm.save()
-        return HttpResponseRedirect('admin-add-drinkitem')
-    return render(request,'ecom/admin_add_drinks.html',{'productForm':productForm})
+        return HttpResponseRedirect('admin-products')
+    return render(request,'ecom/admin_add_products.html',{'productForm':productForm})
 
 
 @login_required(login_url='adminlogin')
-def admin_add_drinkitem_view(request):
-    productForm = forms.DrinkItemForm()
+def delete_product_view(request,pk):
+    product=models.Product.objects.get(id=pk)
+    product.delete()
+    return redirect('admin-products')
+
+
+@login_required(login_url='adminlogin')
+def update_product_view(request,pk):
+    product=models.Product.objects.get(id=pk)
+    productForm=forms.ProductForm(instance=product)
     if request.method=='POST':
-        productForm=forms.DrinkItemForm(request.POST, request.FILES)
+        productForm=forms.ProductForm(request.POST,request.FILES,instance=product)
         if productForm.is_valid():
             productForm.save()
-        return HttpResponseRedirect('admin-drinks')
-    return render(request,'ecom/admin_add_drinks.html',{'productForm':productForm})
-
-
-@login_required(login_url='adminlogin')
-def admin_add_cake_view(request):
-    productForm = forms.CakeForm()
-    if request.method=='POST':
-        productForm=forms.CakeForm(request.POST, request.FILES)
-        if productForm.is_valid():
-            productForm.save()
-        return HttpResponseRedirect('admin-add-cakeitem')
-    return render(request,'ecom/admin_add_cakes.html',{'productForm':productForm})
-
-@login_required(login_url='adminlogin')
-def admin_add_cakeitem_view(request):
-    productForm = forms.CakeItemForm()
-    if request.method=='POST':
-        productForm=forms.CakeItemForm(request.POST, request.FILES)
-        if productForm.is_valid():
-            productForm.save()
-        return HttpResponseRedirect('admin-cakes')
-
-    return render(request,'ecom/admin_add_cakeitems.html',{'productForm':productForm})
-
-
-
-@login_required(login_url='adminlogin')
-def delete_cake_view(request,pk):
-    cakeitem =models.Cakeitem.objects.get(id=pk)
-    cake = cakeitem.cake
-    if request.method == "POST":
-        cake.delete()
-        return redirect('admin-cakes')
-
-    context = {'item' : cakeitem}
-    return render(request, 'ecom/cake_delete.html', context)
-
-
-@login_required(login_url='adminlogin')
-def delete_drink_view(request,pk):
-    drinkitem =models.Drinkitem.objects.get(id=pk)
-    drink = drinkitem.drink
-    if request.method == "POST":
-        drink.delete()
-        return redirect('admin-drinks')
-
-    context = {'item' : drinkitem}
-    return render(request, 'ecom/drink_delete.html', context)
-
-
-@login_required(login_url='adminlogin')
-def update_drink_view(request,pk):
-    drinkitem = models.Drinkitem.objects.get(id=pk)
-    productItemForm = forms.DrinkItemForm(instance=drinkitem)
-    productForm = forms.DrinkForm(instance=drinkitem.drink)
-    if request.method=='POST':
-        productForm=forms.DrinkForm(request.POST, request.FILES, instance=drinkitem.drink)
-        productItemForm = forms.DrinkItemForm(request.POST, request.FILES, instance=drinkitem)
-        if productForm.is_valid() and productItemForm.is_valid():
-            productForm.save()
-            productItemForm.save()
-            return redirect('admin-drinks')
-
-    context = {'productForm' : productForm, 'productItemForm' : productItemForm}
-    return render(request,'ecom/admin_update_drink.html',context)
-
-@login_required(login_url='adminlogin')
-def update_cake_view(request,pk):
-    cakeitem = models.Cakeitem.objects.get(id=pk)
-    cakeForm = forms.CakeForm(instance= cakeitem.cake)
-    cakeItemForm = forms.CakeItemForm(instance= cakeitem)
-    if request.method=='POST':
-        cakeForm=forms.CakeForm(request.POST, instance=cakeitem.cake)
-        cakeitemForm=forms.CakeItemForm(request.POST, request.FILES, instance=cakeitem)
-        if cakeForm.is_valid() and cakeitemForm.is_valid():
-            cakeForm.save()
-            cakeitemForm.save()
-            return redirect('admin-cakes')
-
-    context = {'cakeForm' : cakeForm, 'cakeitemForm' : cakeItemForm}
-    return render(request,'ecom/admin_update_cake.html',context)
+            return redirect('admin-products')
+    return render(request,'ecom/admin_update_product.html',{'productForm':productForm})
 
 
 @login_required(login_url='adminlogin')
@@ -435,7 +359,7 @@ def cart_view(request):
         cake_ids = request.COOKIES['cake_ids']
         if cake_ids != "":
             cake_id_in_cart=cake_ids.split('|')
-            cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+            cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
             #for total price shown in cart
             for p in cakes:
                 total=total+p.price    
@@ -445,7 +369,7 @@ def cart_view(request):
         drink_ids = request.COOKIES['drink_ids']
         if drink_ids != "":
             drink_id_in_cart=drink_ids.split('|')
-            drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+            drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
             #for total price shown in cart
             for p in drinks:
                 total=total+p.price      
@@ -503,7 +427,7 @@ def remove_cake_from_cart_view(request,pk):
         cake_id_in_cart=cake_ids.split('|')
         cake_id_in_cart=list(set(cake_id_in_cart))
         cake_id_in_cart.remove(str(pk))
-        cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+        cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
         #for total price shown in cart after removing product
         for p in cakes:
             total=total+p.price
@@ -537,7 +461,7 @@ def remove_drink_from_cart_view(request,pk):
         drink_id_in_cart=drink_ids.split('|')
         drink_id_in_cart=list(set(drink_id_in_cart))
         drink_id_in_cart.remove(str(pk))
-        drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+        drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
         #for total price shown in cart after removing product
         for p in drinks:
             total=total+p.price
@@ -571,7 +495,7 @@ def send_feedback_view(request):
 @login_required(login_url='customerlogin')
 @user_passes_test(is_customer)
 def customer_home_view(request):
-    cakes=models.Cake.objects.all()
+    cakes=models.Cakeitem.objects.all()
     if 'cake_ids' in request.COOKIES:
         cake_ids = request.COOKIES['cake_ids']
         counter=cake_ids.split('|')
@@ -586,11 +510,11 @@ def customer_products_view(request):
     return render(request,'ecom/customer_home.html',{'products':products})
 
 def customer_drinks_view(request):
-    drinks=models.Drink.objects.all()
+    drinks=models.Drinkitem.objects.all()
     return render(request,'ecom/customer_home_drink.html',{'products':drinks})
 
 def customer_cakes_view(request):
-    cakes=models.Cake.objects.all()
+    cakes=models.Cakeitem.objects.all()
     return render(request,'ecom/customer_home_cake.html',{'products':cakes})
 
 # shipment address before placing order
@@ -632,9 +556,10 @@ def customer_address_view(request):
             # here we are taking address, email, mobile at time of order placement
             # we are not taking it from customer account table because
             # these thing can be changes
-            email = addressForm.cleaned_data['Email']
             mobile=addressForm.cleaned_data['Mobile']
             address = addressForm.cleaned_data['Address']
+            nameShip = addressForm.cleaned_data['NameShip']
+            price = addressForm.cleaned_data['Price']
             #for showing total price on payment page.....accessing id from cookies then fetching  price of product from db
             total=0
 
@@ -642,7 +567,7 @@ def customer_address_view(request):
                 cake_ids = request.COOKIES['cake_ids']
                 if cake_ids != "":
                     cake_id_in_cart=cake_ids.split('|')
-                    cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+                    cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
                     for p in cakes:
                         total=total+p.price
 
@@ -650,14 +575,16 @@ def customer_address_view(request):
                 drink_ids = request.COOKIES['drink_ids']
                 if drink_ids != "":
                     drink_id_in_cart=drink_ids.split('|')
-                    drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+                    drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
                     for p in drinks:
                         total=total+p.price
 
-            response = render(request, 'ecom/payment.html',{'total':total})
-            response.set_cookie('email',email)
+            response = render(request, 'ecom/payment.html',{'total':total+price}) # tổng tiền = total + price ship
             response.set_cookie('mobile',mobile)
             response.set_cookie('address',address)
+            response.set_cookie('nameShip',nameShip)
+            response.set_cookie('price',price)
+            response.set_cookie('total',total)
             return response
     
     product_in_cart = False    
@@ -681,48 +608,57 @@ def payment_success_view(request):
     customer=models.Customer.objects.get(user_id=request.user.id)
     cakes=None
     drinks=None
-    email=None
-    mobile=None
-    address=None
     countCake = 0
     countDrink = 0    
+    nameShip=None
+    price=None
+    total=None
+ 
+    if 'total' in request.COOKIES:
+        total=request.COOKIES['total']    
+ 
+    if 'nameShip' in request.COOKIES:
+        nameShip=request.COOKIES['nameShip']
+    if 'price' in request.COOKIES:
+        price=request.COOKIES['price'] 
+        shipment = models.Shipment.objects.get_or_create(name = nameShip, price = price) 
+        payment = models.Payment.objects.create(totalMoney = total)
+
+          
     if 'cake_ids' in request.COOKIES:
         cake_ids = request.COOKIES['cake_ids']
         if cake_ids != "":
             cake_id_in_cart=cake_ids.split('|')
-            cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+            cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
             countCake+=1
             
     if 'drink_ids' in request.COOKIES:
         drink_ids = request.COOKIES['drink_ids']
         if drink_ids != "":
             drink_id_in_cart=drink_ids.split('|')
-            drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+            drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
             countDrink+=1            
     # Here we get products list that will be ordered by one customer at a time
     # these things can be change so accessing at the time of order...
-    if 'email' in request.COOKIES:
-        email=request.COOKIES['email']
-    if 'mobile' in request.COOKIES:
-        mobile=request.COOKIES['mobile']
-    if 'address' in request.COOKIES:
-        address=request.COOKIES['address']
+
 
     # dang sai
+
     if countDrink > 0:
         for drink in drinks:
-          models.Orders.objects.get_or_create(customer=customer,drink=drink,status='Pending',email=email,mobile=mobile,address=address)
+          cart = models.Cart.objects.get_or_create(drinkitem=drink,totalMoney=drink.price)
+          models.Orders.objects.get_or_create(customer = customer,  status = 'Pending' )
     if countCake > 0:
         for cake in cakes:
-          models.Orders.objects.get_or_create(customer=customer,cake=cake,status='Pending',email=email,mobile=mobile,address=address)
-
+          cart = models.Cart.objects.get_or_create(cakeitem=cake,totalMoney=cake.price)
+          models.Orders.objects.get_or_create(customer = customer, status = 'Pending' )
+    
     # after order placed cookies should be deleted
     response = render(request,'ecom/payment_success.html')
     response.delete_cookie('drink_ids')
     response.delete_cookie('cake_ids')
     response.delete_cookie('email')
-    response.delete_cookie('mobile')
-    response.delete_cookie('address')
+
     return response
 
 
@@ -735,7 +671,7 @@ def my_order_view(request):
     orders=models.Orders.objects.all().filter(customer_id = customer)
     ordered_products=[]
     for order in orders:
-        ordered_product=models.Product.objects.all().filter(id=order.product.id) 
+        ordered_product=models.Product.objects.all().filter(id=order.product.id)
         ordered_products.append(ordered_product)
 
     return render(request,'ecom/my_order.html',{'data':zip(ordered_products,orders)})
@@ -834,44 +770,3 @@ def contactus_view(request):
     return render(request, 'ecom/contactus.html', {'form':sub})
 
 
-#========== SHIPPMENT ============
-@login_required(login_url='adminlogin')
-def admin_shippment_view(request):    
-    shipment = models.Shipment.objects.all()
-    shipmentFilter = ShippmentFilter(request.GET, queryset=shipment)
-    context = {'shipment' : shipment, 'shipmentFilter' : shipmentFilter}
-    return render(request,'ecom/admin_shippment.html', context)
-
-@login_required(login_url='adminlogin')
-def admin_add_shipment_view(request):
-    shipmentForm = forms.ShipmentForm()
-    if request.method=='POST':
-        shipmentForm = forms.ShipmentForm(request.POST)
-        if shipmentForm.is_valid():
-            shipmentForm.save()
-        return HttpResponseRedirect('admin-shipment')
-    return render(request,'ecom/admin_add_shipment.html',{'shipmentForm' :shipmentForm})
-
-@login_required(login_url='adminlogin')
-def admin_delete_shipment_view(request,pk):
-    shipment = models.Shipment.objects.get(id=pk)
-    if request.method == "POST":
-        shipment.delete()
-        return redirect('admin-shipment')
-
-    context = {'item' : shipment}
-    return render(request, 'ecom/admin_shipment_delete.html', context)
-
-
-@login_required(login_url='adminlogin')
-def admin_update_shipment_view(request,pk):
-    shipment = models.Shipment.objects.get(id=pk)
-    shipmentForm = forms.ShipmentForm(instance=shipment)
-    if request.method=='POST':
-        shipmentForm=forms.ShipmentForm(request.POST, instance=shipment)
-        if shipmentForm.is_valid():
-            shipmentForm.save()
-            return redirect('admin-shipment')
-
-    context = {'shipmentForm' : shipmentForm}
-    return render(request,'ecom/admin_shipment_update.html',context)
