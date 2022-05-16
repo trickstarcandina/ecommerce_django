@@ -833,4 +833,11 @@ def contactus_view(request):
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form':sub})
 
+#-------------------LIGHT THEME--------------
+def test_nav_view(request):
+    return render(request,'ecom/navbar_light.html')
+
+def test_homepage_view(request):
+    return render(request,'ecom/homepage_light.html')
+
 
