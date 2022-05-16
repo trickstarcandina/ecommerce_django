@@ -69,7 +69,9 @@ urlpatterns = [
     path('customer-address', views.customer_address_view,name='customer-address'),
     path('payment-success', views.payment_success_view,name='payment-success'),
     
-    
-
+#-------------------------------------------------------------
+#------------------------LIGHT THEME--------------------------
+    path('navbar', views.test_nav_view,name='navbar'),
+    path('homepage', views.test_homepage_view,name='homepage'),
 
 ]
