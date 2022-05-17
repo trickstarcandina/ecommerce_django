@@ -93,20 +93,24 @@ select{
   {% csrf_token %}
   <ul class="form-style-1">
     <li>
-        <label>Email <span class="required">*</span></label>
-        {% render_field addressForm.Email class="field-long" placeholder="Email" %}
-
-    </li>
-    <li>
         <label>Mobile <span class="required">*</span></label>
         {% render_field addressForm.Mobile class="field-long" placeholder="Mobile" %}
     </li>
 
     <li>
-        <label>Shipment Address <span class="required">*</span></label>
+        <label>Address <span class="required">*</span></label>
         {% render_field addressForm.Address id="field5" class="field-long field-textarea" placeholder="Building Number,city, pin" %}
-
     </li>
+
+    <li>
+        <label>NameShip <span class="required">*</span></label>
+        {% render_field addressForm.NameShip id="field5" class="field-long field-textarea" placeholder="Giao hàng nhanh" %}
+    </li>	
+
+    <li>
+        <label>Price <span class="required">*</span></label>
+        {% render_field addressForm.Price class="field-long" placeholder="vnđ" %}
+    </li>	
     <li>
         <input type="submit" value="Proceed To Pay" />
     </li>

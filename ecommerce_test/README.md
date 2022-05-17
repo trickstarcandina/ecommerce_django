@@ -67,9 +67,10 @@ py manage.py createsuperuser
 - Open Terminal and Execute Following Commands :
 
 ```
-pip install django==3.0.5
+https://github.com/trickstarcandina/ecommerce_django
 pip install django-widget-tweaks
 pip install xhtml2pdf
+pip install django-filter
 
 ```
 

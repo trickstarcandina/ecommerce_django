@@ -29,9 +29,10 @@ class CakeForm(forms.ModelForm):
 
 #address of shipment
 class AddressForm(forms.Form):
-    Email = forms.EmailField()
     Mobile= forms.IntegerField()
     Address = forms.CharField(max_length=500)
+    NameShip = forms.CharField(max_length=500)
+    Price = forms.IntegerField()
 
 class FeedbackForm(forms.ModelForm):
     class Meta:

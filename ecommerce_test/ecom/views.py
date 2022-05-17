@@ -435,7 +435,7 @@ def cart_view(request):
         cake_ids = request.COOKIES['cake_ids']
         if cake_ids != "":
             cake_id_in_cart=cake_ids.split('|')
-            cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+            cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
             #for total price shown in cart
             for p in cakes:
                 total=total+p.price    
@@ -445,7 +445,7 @@ def cart_view(request):
         drink_ids = request.COOKIES['drink_ids']
         if drink_ids != "":
             drink_id_in_cart=drink_ids.split('|')
-            drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+            drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
             #for total price shown in cart
             for p in drinks:
                 total=total+p.price      
@@ -571,7 +571,7 @@ def send_feedback_view(request):
 @login_required(login_url='customerlogin')
 @user_passes_test(is_customer)
 def customer_home_view(request):
-    cakes=models.Cake.objects.all()
+    cakes=models.Cakeitem.objects.all()
     if 'cake_ids' in request.COOKIES:
         cake_ids = request.COOKIES['cake_ids']
         counter=cake_ids.split('|')
@@ -586,15 +586,14 @@ def customer_products_view(request):
     return render(request,'ecom/customer_home.html',{'products':products})
 
 def customer_drinks_view(request):
-    drinks=models.Drink.objects.all()
+    drinks=models.Drinkitem.objects.all()
     return render(request,'ecom/customer_home_drink.html',{'products':drinks})
 
 def customer_cakes_view(request):
-    cakes=models.Cake.objects.all()
+    cakes=models.Cakeitem.objects.all()
     return render(request,'ecom/customer_home_cake.html',{'products':cakes})
 
 # shipment address before placing order
-@login_required(login_url='customerlogin')
 def customer_address_view(request):
     # this is for checking whether product is present in cart or not
     # if there is no product in cart we will not show address form
@@ -632,9 +631,10 @@ def customer_address_view(request):
             # here we are taking address, email, mobile at time of order placement
             # we are not taking it from customer account table because
             # these thing can be changes
-            email = addressForm.cleaned_data['Email']
             mobile=addressForm.cleaned_data['Mobile']
             address = addressForm.cleaned_data['Address']
+            nameShip = addressForm.cleaned_data['NameShip']
+            price = addressForm.cleaned_data['Price']
             #for showing total price on payment page.....accessing id from cookies then fetching  price of product from db
             total=0
 
@@ -642,7 +642,7 @@ def customer_address_view(request):
                 cake_ids = request.COOKIES['cake_ids']
                 if cake_ids != "":
                     cake_id_in_cart=cake_ids.split('|')
-                    cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+                    cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
                     for p in cakes:
                         total=total+p.price
 
@@ -650,14 +650,16 @@ def customer_address_view(request):
                 drink_ids = request.COOKIES['drink_ids']
                 if drink_ids != "":
                     drink_id_in_cart=drink_ids.split('|')
-                    drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+                    drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
                     for p in drinks:
                         total=total+p.price
 
-            response = render(request, 'ecom/payment.html',{'total':total})
-            response.set_cookie('email',email)
+            response = render(request, 'ecom/payment.html',{'total':total+price}) # tổng tiền = total + price ship
             response.set_cookie('mobile',mobile)
             response.set_cookie('address',address)
+            response.set_cookie('nameShip',nameShip)
+            response.set_cookie('price',price)
+            response.set_cookie('total',total)
             return response
     
     product_in_cart = False    
@@ -681,48 +683,57 @@ def payment_success_view(request):
     customer=models.Customer.objects.get(user_id=request.user.id)
     cakes=None
     drinks=None
-    email=None
-    mobile=None
-    address=None
     countCake = 0
     countDrink = 0    
+    nameShip=None
+    price=None
+    total=None
+ 
+    if 'total' in request.COOKIES:
+        total=request.COOKIES['total']    
+ 
+    if 'nameShip' in request.COOKIES:
+        nameShip=request.COOKIES['nameShip']
+    if 'price' in request.COOKIES:
+        price=request.COOKIES['price'] 
+        shipment = models.Shipment.objects.get_or_create(name = nameShip, price = price) 
+        payment = models.Payment.objects.create(totalMoney = total)
+
+          
     if 'cake_ids' in request.COOKIES:
         cake_ids = request.COOKIES['cake_ids']
         if cake_ids != "":
             cake_id_in_cart=cake_ids.split('|')
-            cakes=models.Cake.objects.all().filter(id__in = cake_id_in_cart)
+            cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
             countCake+=1
             
     if 'drink_ids' in request.COOKIES:
         drink_ids = request.COOKIES['drink_ids']
         if drink_ids != "":
             drink_id_in_cart=drink_ids.split('|')
-            drinks=models.Drink.objects.all().filter(id__in = drink_id_in_cart)
+            drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
             countDrink+=1            
     # Here we get products list that will be ordered by one customer at a time
     # these things can be change so accessing at the time of order...
-    if 'email' in request.COOKIES:
-        email=request.COOKIES['email']
-    if 'mobile' in request.COOKIES:
-        mobile=request.COOKIES['mobile']
-    if 'address' in request.COOKIES:
-        address=request.COOKIES['address']
+
 
     # dang sai
+
     if countDrink > 0:
         for drink in drinks:
-          models.Orders.objects.get_or_create(customer=customer,drink=drink,status='Pending',email=email,mobile=mobile,address=address)
+          cart = models.Cart.objects.get_or_create(drinkitem=drink,totalMoney=drink.price)
+          models.Orders.objects.get_or_create(customer = customer,  status = 'Pending' )
     if countCake > 0:
         for cake in cakes:
-          models.Orders.objects.get_or_create(customer=customer,cake=cake,status='Pending',email=email,mobile=mobile,address=address)
-
+          cart = models.Cart.objects.get_or_create(cakeitem=cake,totalMoney=cake.price)
+          models.Orders.objects.get_or_create(customer = customer, status = 'Pending' )
+    
     # after order placed cookies should be deleted
     response = render(request,'ecom/payment_success.html')
     response.delete_cookie('drink_ids')
     response.delete_cookie('cake_ids')
     response.delete_cookie('email')
-    response.delete_cookie('mobile')
-    response.delete_cookie('address')
+
     return response
 
 
