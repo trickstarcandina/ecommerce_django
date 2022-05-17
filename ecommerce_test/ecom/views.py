@@ -582,7 +582,7 @@ def customer_home_view(request):
 
 def customer_home_without_login(request):
     cakes=models.Cakeitem.objects.all()
-    return render(request,'ecom/customer_home_without_login.html',{'products':cakes})
+    return render(request,'ecom/customer_home_cake_without_login.html',{'products':cakes})
 
 @login_required(login_url='customerlogin')
 def customer_products_view(request):
@@ -603,7 +603,7 @@ def customer_drinks_view_without_login(request):
 
 def customer_cakes_view_without_login(request):
     cakes=models.Cakeitem.objects.all()
-    return render(request,'ecom/customer_home_without_login.html',{'products':cakes})
+    return render(request,'ecom/customer_home_cake_without_login.html',{'products':cakes})
 
 # shipment address before placing order
 def customer_address_view(request):
