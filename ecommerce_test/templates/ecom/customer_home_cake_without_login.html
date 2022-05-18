@@ -344,7 +344,7 @@
                 <div class="h-bg-inner"></div>
               </div>
 
-              <a class="cart" href="/customerlogin">
+              <a class="cart" href="{% url 'customerlogin_addtocart' p.id  %}">
                 <span class="price">{{p.price}} vnđ</span>
                 <span class="add-to-cart-cake">
                   <span class="txt">Add to cart</span>

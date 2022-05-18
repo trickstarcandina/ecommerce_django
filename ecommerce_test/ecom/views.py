@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
 from .filters import CakeFilter, DrinkFilter, ShippmentFilter
+from django.contrib.auth.views import LoginView,LogoutView
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -352,6 +353,10 @@ def add_to_cart_product_view(request,pkproduct):
     messages.info(request, product.name + ' added to cart successfully!')
 
     return response
+
+def login_with_add_to_cart(request,pkproduct):
+    LoginView.as_view(template_name='ecom/customerlogin.html')
+    return add_to_cart_cake_view(request=request, pkcake=pkproduct)
 
 def add_to_cart_cake_view(request,pkcake):
     cakes=models.Cake.objects.all()
