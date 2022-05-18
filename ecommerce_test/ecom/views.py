@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect,reverse
+from itertools import chain
 from . import forms,models
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.mail import send_mail
@@ -582,7 +583,9 @@ def customer_home_view(request):
 
 def customer_home_without_login(request):
     cakes=models.Cakeitem.objects.all()
-    return render(request,'ecom/customer_home_cake_without_login.html',{'products':cakes})
+    drinks=models.Drinkitem.objects.all()
+    products = list(chain(cakes,drinks))
+    return render(request,'ecom/customer_home_cake_without_login.html',{'products':products})
 
 @login_required(login_url='customerlogin')
 def customer_products_view(request):
