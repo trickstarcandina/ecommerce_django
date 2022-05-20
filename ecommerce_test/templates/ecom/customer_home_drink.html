@@ -307,6 +307,10 @@ body {
     width: 100%;
   }
 }
+.footer-product {
+    display: flex;
+    justify-content: space-around;
+  }
   </style>
 
 
@@ -335,17 +339,13 @@ body {
                   <div class="a-size">{{p.description}}</div>
                 </div>
               </div>
-
-              <div class="box-down">
-                <div class="h-bg">
-                  <div class="h-bg-inner"></div>
-                </div>
-
-                <a class="cart" href="{% url 'add-to-cart-drink' p.id  %}">
-                  <span class="price">{{p.price}} vnđ</span>
-                  <span class="add-to-cart-drink">
-                    <span class="txt">Add to cart</span>
-                  </span>
+              <div class="price">Price: {{p.price}} vnđ</div>
+              <div class="footer-product">
+                <a href="{% url 'add-to-cart-drink' p.id  %}">
+                  <div class="btn btn-success">Add to cart</div>
+                </a>
+                <a href="/drink-item/{{p.id}}">
+                  <div class="btn btn-primary">View detail</div>
                 </a>
               </div>
             </div>

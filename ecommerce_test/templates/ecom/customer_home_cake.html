@@ -307,11 +307,11 @@ body {
     width: 100%;
   }
 }
-  </style>
-
-
-
-
+  .footer-product {
+    display: flex;
+    justify-content: space-around;
+  }
+</style>
   {%if products%}
   <h3 style="text-align:center; color:yellow;">{{word}}</h3>
   <br>
@@ -335,17 +335,13 @@ body {
                   <div class="a-size">{{p.description}}</div>
                 </div>
               </div>
-
-              <div class="box-down">
-                <div class="h-bg">
-                  <div class="h-bg-inner"></div>
-                </div>
-
-                <a class="cart" href="{% url 'add-to-cart-cake' p.id  %}">
-                  <span class="price">{{p.price}} vnđ</span>
-                  <span class="add-to-cart-cake">
-                    <span class="txt">Add to cart</span>
-                  </span>
+              <div class="price">Price: {{p.price}} vnđ</div>
+              <div class="footer-product">
+                <a href="{% url 'add-to-cart-cake' p.id  %}">
+                  <div class="btn btn-success">Add to cart</div>
+                </a>
+                <a href="/cake-item/{{p.id}}">
+                  <div class="btn btn-primary">View detail</div>
                 </a>
               </div>
             </div>
