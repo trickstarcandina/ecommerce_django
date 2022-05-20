@@ -578,9 +578,7 @@ def drinkView(request, pk):
 
 def add_comment_cake(request, pk):
     eachProduct = models.Cakeitem.objects.get(id=pk)
-    cakeData = models.Cakeitem.objects.all().filter(id=pk)
-    comments = models.Comment.objects.filter(cakeItem__id__in=cakeData.all())
-    customerId = comments[0].customer.id
+    customerId = request.user.id
     customer = models.Customer.objects.get(id=customerId)
     form = forms.CommentForm(instance=eachProduct)
     if request.method == 'POST':
@@ -607,9 +605,7 @@ def delete_comment_cake(request, pk):
 
 def add_comment_drink(request, pk):
     eachProduct = models.Drinkitem.objects.get(id=pk)
-    cakeData = models.Drinkitem.objects.all().filter(id=pk)
-    comments = models.Comment.objects.filter(drinkItem__id__in=cakeData.all())
-    customerId = comments[0].customer.id
+    customerId = request.user.id
     customer = models.Customer.objects.get(id=customerId)
     form = forms.CommentForm(instance=eachProduct)
     if request.method == 'POST':
