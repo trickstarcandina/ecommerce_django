@@ -105,9 +105,11 @@ class Feedback(models.Model):
     
 class Comment(models.Model):
     content = models.CharField(max_length=500)
-    customer = models.ForeignKey('Customer', on_delete=models.CASCADE,null=True)
-    cakeitem=models.ForeignKey('Cakeitem',on_delete=models.CASCADE,null=True)
-    drinkitem=models.ForeignKey('Drinkitem',on_delete=models.CASCADE,null=True)
+    customer = models.ForeignKey(Customer, related_name='Customer', on_delete=models.CASCADE,null=True)
+    cakeItem = models.ForeignKey(Cakeitem, related_name='Cakeitem',on_delete=models.CASCADE,null=True,blank=True)
+    drinkItem = models.ForeignKey(Drinkitem, related_name='Drinkitem',on_delete=models.CASCADE,null=True,blank=True)
+    def __str__(self):
+        return "{0}".format(self.content)
   
 # tao form    
 class Product(models.Model):

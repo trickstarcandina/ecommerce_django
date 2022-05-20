@@ -65,6 +65,10 @@ urlpatterns = [
     path('download-invoice/<int:orderID>/<int:productID>', views.download_invoice_view,name='download-invoice'),
     path("cake-item/<int:cakeId>", views.cakeView, name="CakeView"),
     path("drink-item/<int:pk>", views.drinkView, name="DrinkView"),
+    path("add-comment-cake/<int:pk>", views.add_comment_cake, name="add-comment-cake"),
+    path("delete-comment-cake/<int:pk>", views.delete_comment_cake, name="delete-comment-cake"),
+    path("add-comment-drink/<int:pk>", views.add_comment_drink, name="add-comment-drink"),
+    path("delete-comment-drink/<int:pk>", views.delete_comment_drink, name="delete-comment-drink"),
 
     path('add-to-cart-product/<int:pkproduct>', views.add_to_cart_product_view,name='add-to-cart-product'),
     path('add-to-cart-cake/<int:pkcake>', views.add_to_cart_cake_view,name='add-to-cart-cake'),
