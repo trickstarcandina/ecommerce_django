@@ -565,7 +565,13 @@ def send_feedback_view(request):
             return render(request, 'ecom/feedback_sent.html')
     return render(request, 'ecom/send_feedback.html', {'feedbackForm':feedbackForm})
 
+def cakeView(request, cakeId):
+    cake = models.Cakeitem.objects.all().filter(id=cakeId)
+    return render(request, "ecom/cakeView.html", {'cakeItem': cake[0]})
 
+def drinkView(request, pk):
+    cake = models.Drinkitem.objects.all().filter(id=pk)
+    return render(request, "ecom/drinkView.html", {'drinkItem': cake[0]})
 #---------------------------------------------------------------------------------
 #------------------------ CUSTOMER RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
@@ -676,10 +682,10 @@ def customer_address_view(request):
             response.set_cookie('price',price)
             response.set_cookie('total',total)
             return response
-    
-    product_in_cart = False    
-    if cake_in_cart or drink_in_cart : 
-        product_in_cart = True 
+
+    product_in_cart = False
+    if cake_in_cart or drink_in_cart :
+        product_in_cart = True
 
     return render(request,'ecom/customer_address.html',{'addressForm':addressForm,'product_in_cart':product_in_cart,'drink_count_in_cart':drink_count_in_cart, 'cake_count_in_cart':cake_count_in_cart})
 
@@ -699,35 +705,35 @@ def payment_success_view(request):
     cakes=None
     drinks=None
     countCake = 0
-    countDrink = 0    
+    countDrink = 0
     nameShip=None
     price=None
     total=None
- 
+
     if 'total' in request.COOKIES:
-        total=request.COOKIES['total']    
- 
+        total=request.COOKIES['total']
+
     if 'nameShip' in request.COOKIES:
         nameShip=request.COOKIES['nameShip']
     if 'price' in request.COOKIES:
-        price=request.COOKIES['price'] 
-        shipment = models.Shipment.objects.get_or_create(name = nameShip, price = price) 
+        price=request.COOKIES['price']
+        shipment = models.Shipment.objects.get_or_create(name = nameShip, price = price)
         payment = models.Payment.objects.create(totalMoney = total)
 
-          
+
     if 'cake_ids' in request.COOKIES:
         cake_ids = request.COOKIES['cake_ids']
         if cake_ids != "":
             cake_id_in_cart=cake_ids.split('|')
             cakes=models.Cakeitem.objects.all().filter(id__in = cake_id_in_cart)
             countCake+=1
-            
+
     if 'drink_ids' in request.COOKIES:
         drink_ids = request.COOKIES['drink_ids']
         if drink_ids != "":
             drink_id_in_cart=drink_ids.split('|')
             drinks=models.Drinkitem.objects.all().filter(id__in = drink_id_in_cart)
-            countDrink+=1            
+            countDrink+=1
     # Here we get products list that will be ordered by one customer at a time
     # these things can be change so accessing at the time of order...
 
@@ -742,7 +748,7 @@ def payment_success_view(request):
         for cake in cakes:
           cart = models.Cart.objects.get_or_create(cakeitem=cake,totalMoney=cake.price)
           models.Orders.objects.get_or_create(customer = customer, status = 'Pending' )
-    
+
     # after order placed cookies should be deleted
     response = render(request,'ecom/payment_success.html')
     response.delete_cookie('drink_ids')
@@ -761,7 +767,7 @@ def my_order_view(request):
     orders=models.Orders.objects.all().filter(customer_id = customer)
     ordered_products=[]
     for order in orders:
-        ordered_product=models.Product.objects.all().filter(id=order.product.id) 
+        ordered_product=models.Product.objects.all().filter(id=order.product.id)
         ordered_products.append(ordered_product)
 
     return render(request,'ecom/my_order.html',{'data':zip(ordered_products,orders)})
@@ -862,7 +868,7 @@ def contactus_view(request):
 
 #========== SHIPPMENT ============
 @login_required(login_url='adminlogin')
-def admin_shippment_view(request):    
+def admin_shippment_view(request):
     shipment = models.Shipment.objects.all()
     shipmentFilter = ShippmentFilter(request.GET, queryset=shipment)
     context = {'shipment' : shipment, 'shipmentFilter' : shipmentFilter}
