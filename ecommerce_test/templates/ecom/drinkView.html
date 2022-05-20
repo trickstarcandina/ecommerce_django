@@ -159,7 +159,29 @@
 		opacity: 1;
 		-webkit-transform: scale(1);
 				transform: scale(1); } }
+				.comments{
+    margin-top: 5%;
+    margin-left: 20px;
+}
 
+.comment{
+    padding-left: 40px;
+    padding-right: 30px;
+    padding-top: 10px;
+}
+.comment h4,.comment span,.darker h4,.darker span{
+    display: inline;
+}
+.comment p {
+	text-align: initial;
+}
+.comment-content {
+	margin-top: 10px
+}
+.add-comment {
+	margin-right : 15px;
+}
+.group {display: flex;}
 	/*# sourceMappingURL=style.css.map */
 </style>
 <div class="container">
@@ -189,6 +211,31 @@
 									<button class="add-to-cart btn btn-default" type="button">add to cart</button>
 								</a>
 							</div>
+						</div>
+					</div>
+					<div class="comment-wrapper">
+						<h4>Comments</h4>
+						{% if not comments.all %}
+							<p>No comments</p>
+						{% else %}
+							<div class="content">
+								{% if not comments.all %}
+									<div class="comment mt-4 float-left">No comments</div>
+								{% else %}
+									{% for comment in comments.all %}
+										<div class="comment mt-4 float-left">
+											<img src="{% static 'profile_pic/CustomerProfilePic/cta.jpg' %}" alt="" class="rounded-circle" width="40" height="40">
+											<span><strong>{{ comment.customer.user.first_name }} {{ comment.customer.user.last_name }}</strong></span>
+											<br>
+											<p class="comment-content">{{ comment.content }}</p>
+										</div>
+									{% endfor %}
+								{% endif %}
+							</div>
+						{% endif %}
+						<div class="group">
+							<p class="add-comment"><a class="btn btn-primary" href="{% url 'add-comment-drink' drinkItem.id %}">  Add Comment </a></p>
+							<p><a class="btn btn-danger" href="{% url 'delete-comment-drink' drinkItem.id %}">  Delete lasted comment </a></p>
 						</div>
 					</div>
 				</div>

@@ -1,3 +1,4 @@
+from tkinter import Widget
 from django import forms
 from django.contrib.auth.models import User
 from . import models
@@ -67,3 +68,11 @@ class DrinkItemForm(forms.ModelForm):
     class Meta:
         model=models.Drinkitem
         fields= '__all__'
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model=models.Comment
+        fields = ('content',)
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+        }

@@ -1,3 +1,4 @@
+from pprint import pprint
 from django.shortcuts import render,redirect,reverse
 from itertools import chain
 from . import forms,models
@@ -567,11 +568,71 @@ def send_feedback_view(request):
 
 def cakeView(request, cakeId):
     cake = models.Cakeitem.objects.all().filter(id=cakeId)
-    return render(request, "ecom/cakeView.html", {'cakeItem': cake[0]})
+    comments = models.Comment.objects.filter(cakeItem__id__in=cake.all())
+    return render(request, "ecom/cakeView.html", {'cakeItem': cake[0], 'comments': comments})
 
 def drinkView(request, pk):
-    cake = models.Drinkitem.objects.all().filter(id=pk)
-    return render(request, "ecom/drinkView.html", {'drinkItem': cake[0]})
+    drink = models.Drinkitem.objects.all().filter(id=pk)
+    comments = models.Comment.objects.filter(drinkItem__id__in=drink.all())
+    return render(request, "ecom/drinkView.html", {'drinkItem': drink[0], 'comments': comments})
+
+def add_comment_cake(request, pk):
+    eachProduct = models.Cakeitem.objects.get(id=pk)
+    cakeData = models.Cakeitem.objects.all().filter(id=pk)
+    comments = models.Comment.objects.filter(cakeItem__id__in=cakeData.all())
+    customerId = comments[0].customer.id
+    customer = models.Customer.objects.get(id=customerId)
+    form = forms.CommentForm(instance=eachProduct)
+    if request.method == 'POST':
+        form = forms.CommentForm(request.POST, instance=eachProduct)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            c = models.Comment(cakeItem=eachProduct, content=content, customer=customer)
+            c.save()
+            return redirect('customer-cakes')
+        else:
+            print('form is invalid')    
+    else:
+        form = forms.CommentForm()    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'ecom/add_comment.html', context)
+
+def delete_comment_cake(request, pk):
+    comment = models.Comment.objects.filter(cakeItem=pk).last()
+    comment.delete()
+    return redirect('customer-cakes')
+
+def add_comment_drink(request, pk):
+    eachProduct = models.Drinkitem.objects.get(id=pk)
+    cakeData = models.Drinkitem.objects.all().filter(id=pk)
+    comments = models.Comment.objects.filter(drinkItem__id__in=cakeData.all())
+    customerId = comments[0].customer.id
+    customer = models.Customer.objects.get(id=customerId)
+    form = forms.CommentForm(instance=eachProduct)
+    if request.method == 'POST':
+        form = forms.CommentForm(request.POST, instance=eachProduct)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            c = models.Comment(drinkItem=eachProduct, content=content, customer=customer)
+            c.save()
+            return redirect('customer-drinks')
+        else:
+            print('form is invalid')    
+    else:
+        form = forms.CommentForm()    
+    context = {
+        'form': form
+    }
+
+    return render(request, 'ecom/add_comment.html', context)
+
+def delete_comment_drink(request, pk):
+    comment = models.Comment.objects.filter(drinkItem=pk).last()
+    comment.delete()
+    return redirect('customer-drinks')
 #---------------------------------------------------------------------------------
 #------------------------ CUSTOMER RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
